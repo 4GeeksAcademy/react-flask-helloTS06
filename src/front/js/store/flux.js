@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			token: null,
 			message: null,
 			demo: [
 				{
@@ -19,6 +20,47 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
+			},
+
+			syncSessionToken: () => {
+				const token = sessionStorage.getItem("token");
+				if (token && token !=="" && token !== undefined){
+					setStore ({token:token})
+				}
+			},
+			logIn: async (email,password) => {
+				const options ={
+					method: "POST",
+					headers: {
+						"Content-Type":"application/json"
+					},
+				body:JSON.stringify(
+					{
+						email:email,
+						password:password
+					}
+				)
+				}
+				try {
+					const response = await fetch(process.env.BACKEND_URL+"/api/token", options)
+					if (response.status !==200){
+						alert ("Error Response Code", response.status)
+						return false;
+					}
+					const data = await response.json()
+						console.log("accesstoken", data):
+						sessionStorage.setItem("token", data.access_token);
+						setStore ({token:data.access_token})
+						return true;
+				}
+				catch (error){
+					console.log("login error, please try again")
+				}
+			},
+			logOut:() => {
+				sessionStorage.removeItem("token");
+				console.log("You are Logged out!")
+				setStore({token:null})
 			},
 
 			getMessage: async () => {
