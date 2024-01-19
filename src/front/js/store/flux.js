@@ -48,7 +48,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return false;
 					}
 					const data = await response.json()
-						console.log("accesstoken", data):
+						console.log("accesstoken", data);
 						sessionStorage.setItem("token", data.access_token);
 						setStore ({token:data.access_token})
 						return true;
@@ -63,10 +63,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({token:null})
 			},
 
+			addUser: async (email,password) => {
+				const options ={
+					method: "POST",
+					headers: {
+						"Content-Type":"application/json", 
+					},
+					body:JSON.stringify ({
+						email: email,
+						password: password
+				})
+				}
+				try{
+					const response = await fetch (process.env.BACKEND_URL+"api/signup",options)
+					if (response.status!=200){
+						alert("error response code",response.status)
+						return false;
+					}
+					const data = await response.json()
+                    console.log("from the backend",data)
+					return true;			
+				}
+				catch(error){
+					console.log("log in error")
+				}
+			},
+
 			getMessage: async () => {
+				const store = getStore ();
+				const options ={
+					headers: {
+						"Authorization": "Bearer"+ store.token
+					},
+				}
 				try{
 					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+					const resp = await fetch(process.env.BACKEND_URL + "/api/hello",options)
 					const data = await resp.json()
 					setStore({ message: data.message })
 					// don't forget to return something, that is how the async resolves

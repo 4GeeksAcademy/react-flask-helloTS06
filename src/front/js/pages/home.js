@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
+import { Signup } from "./signup";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
@@ -9,6 +10,7 @@ export const Home = () => {
 	return (
 		<div className="text-center mt-5">
 			<h1>Welcome</h1>
+			<h2>{store.message}</h2>
 			<div>
             {!store.token?
 			<>
